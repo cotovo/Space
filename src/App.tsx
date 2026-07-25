@@ -130,7 +130,13 @@ function useActiveSection() {
 }
 
 function Uptime() {
-  const [uptime, setUptime] = useState<{ days: number; hours: number }>({ days: 0, hours: 0 });
+  const [uptime, setUptime] = useState<{ days: number; hours: number }>(() => {
+    const start = new Date("2025-11-10T00:00:00").getTime();
+    const difference = Date.now() - start;
+    const days = Math.floor(difference / 86400000);
+    const hours = Math.floor((difference % 86400000) / 3600000);
+    return { days, hours };
+  });
 
   useEffect(() => {
     const start = new Date("2025-11-10T00:00:00").getTime();
@@ -140,7 +146,6 @@ function Uptime() {
       const hours = Math.floor((difference % 86400000) / 3600000);
       setUptime({ days, hours });
     };
-    update();
     const timer = window.setInterval(update, 60000);
     return () => window.clearInterval(timer);
   }, []);

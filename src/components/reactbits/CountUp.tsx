@@ -27,17 +27,15 @@ export default function CountUp({
 }: CountUpProps) {
   const [count, setCount] = useState(from);
   const ref = useRef<HTMLSpanElement>(null);
-  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (!startWhen || hasAnimated.current) return;
+    if (!startWhen) return;
 
     let startTime: number | null = null;
     let animationFrameId: number;
 
     const timeout = setTimeout(() => {
       onStart?.();
-      hasAnimated.current = true;
 
       const animate = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
