@@ -28,6 +28,8 @@ import { FeishuIcon, OutlookIcon } from "./components/BrandLogos";
 import PetCompanion, { type PetReaction } from "./components/PetCompanion";
 import SignatureBackdrop from "./components/SignatureBackdrop";
 import SiteSections from "./components/SiteSections";
+import Magnet from "./components/reactbits/Magnet";
+import Particles from "./components/reactbits/Particles";
 
 type ThemeMode = "light" | "dark";
 
@@ -233,16 +235,17 @@ export default function App() {
         <video className="background-video" src="/background.mp4" autoPlay loop muted playsInline />
         {/* Global Lighter Blur Mask */}
         <div className="fixed inset-0 z-0 bg-black/10 backdrop-blur-md pointer-events-none" />
+        <Particles className="fixed inset-0 z-0 pointer-events-none" quantity={35} color={theme === "dark" ? "#ffffff" : "#38bdf8"} />
         
         <a className="skip-link" href="#content">跳到主要内容</a>
 
         <section 
           id="intro" 
-          className="relative z-10 min-h-dvh flex items-center justify-center px-4 md:px-8 py-8 md:py-12"
+          className="relative z-10 min-h-dvh flex items-center justify-center px-4 md:px-8 py-10 md:py-14"
         >
 
           <motion.div
-            className="flex flex-col items-center justify-center w-full max-w-6xl mx-auto"
+            className="flex flex-col items-center justify-center w-full max-w-6xl mx-auto my-auto"
             initial="hidden"
             animate="show"
             transition={{ staggerChildren: 0.12, delayChildren: reduceMotion ? 0 : 0.2 }}
@@ -254,7 +257,7 @@ export default function App() {
             {/* Standalone Separate Floating Contact Buttons */}
             <motion.div 
               variants={heroReveal} 
-              className="flex flex-wrap items-center justify-center gap-4 mt-12 z-20 max-w-2xl px-4"
+              className="flex flex-wrap items-center justify-center gap-4 mt-8 md:mt-10 z-20 max-w-2xl px-4"
             >
               {[
                 { id: 'github', label: 'GITHUB', icon: <SiGithub className="w-5 h-5 text-white" />, href: 'https://github.com/kerntau', hoverStyle: "hover:border-white/40 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]" },
@@ -275,35 +278,46 @@ export default function App() {
                   </span>
                 );
                 
+                let content = null;
                 if (link.href) {
-                  return (
+                  content = (
                     <a key={link.id} href={link.href} target="_blank" rel="noopener noreferrer" className={commonClasses} aria-label={link.label}>
                       {link.icon}
                       {tooltip}
                     </a>
                   );
-                }
-                
-                if (link.qr) {
-                  return (
+                } else if (link.qr) {
+                  content = (
                     <button key={link.id} type="button" onClick={() => setActiveQR(link.qr)} className={commonClasses} aria-label={link.label}>
                       {link.icon}
                       {tooltip}
                     </button>
                   );
-                }
-                
-                if (link.action === 'copy') {
-                  return (
+                } else if (link.action === 'copy') {
+                  content = (
                     <button key={link.id} type="button" onClick={() => handleCopy(link.email)} className={commonClasses} aria-label={link.label}>
                       {link.icon}
                       {tooltip}
                     </button>
                   );
                 }
-                
-                return null;
+
+                return content ? (
+                  <Magnet key={link.id} padding={60} magnetStrength={3}>
+                    {content}
+                  </Magnet>
+                ) : null;
               })}
+            </motion.div>
+
+            {/* Scroll Down Arrow */}
+            <motion.div
+              variants={heroReveal}
+              className="flex flex-col items-center animate-bounce text-white/50 hover:text-[var(--t-signal)] transition-colors cursor-pointer mt-8 md:mt-10 z-30"
+              onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <span className="text-[10px] font-mono tracking-widest uppercase mb-1">Scroll</span>
+              <ChevronDown className="w-5 h-5" />
             </motion.div>
 
             {/* Minimalist Premium QR Modal */}
@@ -359,19 +373,6 @@ export default function App() {
               )}
             </AnimatePresence>
 
-
-          </motion.div>
-
-          {/* Scroll Down Arrow */}
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: reduceMotion ? 0 : 0.5, duration: 1 }}
-            className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce text-white/50 hover:text-[var(--t-signal)] transition-colors cursor-pointer z-30"
-            onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            <span className="text-[10px] font-mono tracking-widest uppercase mb-1">Scroll</span>
-            <ChevronDown className="w-5 h-5" />
           </motion.div>
         </section>
 
