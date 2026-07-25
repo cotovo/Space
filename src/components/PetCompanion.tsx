@@ -1,4 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { ThinkingOrb } from "thinking-orbs";
 import {
   useCallback,
   useEffect,
@@ -593,7 +594,7 @@ export default function PetCompanion({
 
         {/* Speech Bubble Emote */}
         <AnimatePresence>
-          {bubbleText && (
+          {(bubbleText || hovered || focused) && (
             <motion.div
               initial={{ opacity: 0, y: 8, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -601,7 +602,10 @@ export default function PetCompanion({
               transition={{ duration: 0.2 }}
               className="absolute -top-14 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-2xl bg-white text-slate-900 font-mono text-xs font-bold shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-100 whitespace-nowrap pointer-events-none z-50 flex items-center gap-1.5 select-none"
             >
-              <span>{bubbleText}</span>
+              <span className="shrink-0 w-5 h-5 inline-flex items-center justify-center overflow-hidden">
+                <ThinkingOrb size={20} state={action === "working" ? "working" : "listening"} theme="light" />
+              </span>
+              <span>{bubbleText || definition.label}</span>
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-white rotate-45 border-r border-b border-slate-100" />
             </motion.div>
           )}
