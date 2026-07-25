@@ -28,8 +28,13 @@ import { FeishuIcon, OutlookIcon } from "./components/BrandLogos";
 import PetCompanion, { type PetReaction } from "./components/PetCompanion";
 import SignatureBackdrop from "./components/SignatureBackdrop";
 import SiteSections from "./components/SiteSections";
+import ClickSpark from "./components/reactbits/ClickSpark";
+import CountUp from "./components/reactbits/CountUp";
 import Magnet from "./components/reactbits/Magnet";
 import Particles from "./components/reactbits/Particles";
+import PixelSnow from "./components/reactbits/PixelSnow";
+import TrueFocus from "./components/reactbits/TrueFocus";
+import RotatingText from "./components/reactbits/RotatingText";
 
 type ThemeMode = "light" | "dark";
 
@@ -125,23 +130,26 @@ function useActiveSection() {
 }
 
 function Uptime() {
-  const ref = useRef<HTMLSpanElement>(null);
+  const [uptime, setUptime] = useState<{ days: number; hours: number }>({ days: 0, hours: 0 });
 
   useEffect(() => {
     const start = new Date("2025-11-10T00:00:00").getTime();
     const update = () => {
-      if (!ref.current) return;
       const difference = Date.now() - start;
       const days = Math.floor(difference / 86400000);
       const hours = Math.floor((difference % 86400000) / 3600000);
-      ref.current.textContent = `${days} DAYS / ${String(hours).padStart(2, "0")} HRS`;
+      setUptime({ days, hours });
     };
     update();
     const timer = window.setInterval(update, 60000);
     return () => window.clearInterval(timer);
   }, []);
 
-  return <span ref={ref} />;
+  return (
+    <span className="font-mono inline-flex items-center gap-1">
+      <CountUp to={uptime.days} duration={1.8} /> DAYS / <CountUp to={uptime.hours} duration={1.5} /> HRS
+    </span>
+  );
 }
 
 export default function App() {
@@ -222,7 +230,8 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <main className="site-root" aria-label="kerntau 个人主页">
+      <ClickSpark sparkColor={theme === "dark" ? "#38bdf8" : "#0284c7"} sparkCount={8} duration={350}>
+        <main className="site-root" aria-label="kerntau 个人主页">
         <audio
           ref={audioRef}
           src="/bgm.mp3"
@@ -232,10 +241,10 @@ export default function App() {
           onPause={() => setIsPlayingBGM(false)}
         />
 
-        <video className="background-video" src="/background.mp4" autoPlay loop muted playsInline />
+        <PixelSnow className="fixed inset-0 z-0 opacity-80" pixelSize={3} snowflakeCount={80} speed={1.0} color={theme === "dark" ? "#ffffff" : "#38bdf8"} />
         {/* Global Lighter Blur Mask */}
         <div className="fixed inset-0 z-0 bg-black/10 backdrop-blur-md pointer-events-none" />
-        <Particles className="fixed inset-0 z-0 pointer-events-none" quantity={35} color={theme === "dark" ? "#ffffff" : "#38bdf8"} />
+        <Particles className="fixed inset-0 z-0 pointer-events-none" quantity={25} color={theme === "dark" ? "#ffffff" : "#38bdf8"} />
         
         <a className="skip-link" href="#content">跳到主要内容</a>
 
@@ -250,8 +259,24 @@ export default function App() {
             animate="show"
             transition={{ staggerChildren: 0.12, delayChildren: reduceMotion ? 0 : 0.2 }}
           >
-            <motion.div variants={heroReveal} className="w-full flex items-center justify-center z-10">
+            <motion.div variants={heroReveal} className="w-full flex flex-col items-center justify-center z-10 gap-2">
               <SignatureBackdrop />
+              <div className="flex items-center gap-1.5 text-xs font-mono font-semibold text-white/70 mt-1">
+                <span>IDENTITY //</span>
+                <RotatingText
+                  texts={["SECURITY RESEARCHER", "FULLSTACK DEVELOPER", "CREATIVE ENGINEER"]}
+                  mainClassName="px-2 py-0.5 bg-white/5 text-[var(--t-signal)] font-bold rounded border border-white/10"
+                  staggerFrom="last"
+                  staggerDuration={0.02}
+                  rotationInterval={2800}
+                />
+              </div>
+              <TrueFocus
+                sentence="SECURITY FULLSTACK CREATIVE"
+                borderColor="#38bdf8"
+                glowColor="rgba(56, 189, 248, 0.5)"
+                className="text-xs md:text-sm font-mono tracking-[0.3em] font-bold text-white/90 uppercase mt-1"
+              />
             </motion.div>
 
             {/* Standalone Separate Floating Contact Buttons */}
@@ -411,6 +436,7 @@ export default function App() {
           onToggleBGM={toggleBGM}
         />
       </main>
+      </ClickSpark>
     </MotionConfig>
   );
 }

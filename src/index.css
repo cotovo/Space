@@ -451,6 +451,15 @@ button:focus-visible, a:focus-visible {
   50% { transform: scale(1.25); opacity: 0.6; }
 }
 
+@keyframes shiny-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.animate-shiny {
+  animation: shiny-shimmer 4s linear infinite;
+}
+
 .hero h1 {
   margin: 0;
   font-family: var(--font-sans);
