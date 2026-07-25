@@ -22,9 +22,14 @@ const SplitText: React.FC<SplitTextProps> = ({
   tag = 'p',
   textAlign = 'left'
 }) => {
-  const Tag = motion[tag] || motion.p;
+  const Tag = (motion[tag] || motion.p) as any;
 
-  const items = splitType === 'words' ? text.split(' ') : text.split('');
+  const items = React.useMemo(() => {
+    if (splitType === 'words') {
+      return text.match(/[\u4e00-\u9fa5]|[^\s\u4e00-\u9fa5]+|\s+/g) || [text];
+    }
+    return text.split('');
+  }, [text, splitType]);
 
   const containerVariants = {
     hidden: {},
@@ -36,17 +41,17 @@ const SplitText: React.FC<SplitTextProps> = ({
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 14 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration, ease: [0.22, 1, 0.36, 1] }
+      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] }
     }
   };
 
   return (
     <Tag
-      className={`inline-block ${className}`}
+      className={`inline-block max-w-full break-words ${className}`}
       style={{ textAlign }}
       initial="hidden"
       whileInView="visible"
@@ -57,7 +62,7 @@ const SplitText: React.FC<SplitTextProps> = ({
         <motion.span
           key={index}
           variants={itemVariants}
-          className="inline-block whitespace-pre"
+          className="inline-block whitespace-pre-wrap"
         >
           {item === ' ' ? '\u00A0' : item}
         </motion.span>

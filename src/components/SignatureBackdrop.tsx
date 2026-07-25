@@ -43,7 +43,7 @@ export default function SignatureBackdrop() {
   const continuousUnderline = "M 160 340 C 360 385, 640 375, 860 315 Q 895 305, 925 295";
 
   return (
-    <div className="signature-scene relative flex items-center justify-center w-full max-w-4xl mx-auto py-2 select-none" aria-hidden="true">
+    <div className="signature-scene relative flex items-center justify-center w-full max-w-4xl mx-auto py-1 select-none" aria-hidden="true">
       <motion.svg
         className="signature-art w-full h-auto overflow-visible"
         viewBox="0 0 960 460"
@@ -188,8 +188,8 @@ export default function SignatureBackdrop() {
         {/* Ambient Twinkling Floating Particles */}
         <FloatingSparkle cx={230} cy={135} r={2.5} delay={2.0} />
         <FloatingSparkle cx={830} cy={210} r={2.2} delay={2.2} />
-        <FloatingSparkle cx={360} cy={380} r={3} delay={2.4} />
-        <FloatingSparkle cx={880} cy={395} r={2} delay={2.6} />
+        <FloatingSparkle cx={360} cy={260} r={2.5} delay={2.4} />
+        <FloatingSparkle cx={760} cy={280} r={2.2} delay={2.6} />
         <FloatingSparkle cx={680} cy={140} r={2.4} delay={2.8} />
 
       </motion.svg>

@@ -1,9 +1,14 @@
 import {
+  ArrowUp,
+  ArrowUpRight,
   Check,
   ChevronDown,
+  Globe,
   Mail,
   Menu,
   Moon,
+  ShieldCheck,
+  Sparkles,
   Sun,
   X,
 } from "lucide-react";
@@ -28,6 +33,8 @@ import { FeishuIcon, OutlookIcon } from "./components/BrandLogos";
 import PetCompanion, { type PetReaction } from "./components/PetCompanion";
 import SignatureBackdrop from "./components/SignatureBackdrop";
 import SiteSections from "./components/SiteSections";
+import PureVibrantIconStream from "./components/PureVibrantIconStream";
+import { DESTINATIONS } from "./data/site";
 import ClickSpark from "./components/reactbits/ClickSpark";
 import CountUp from "./components/reactbits/CountUp";
 import Magnet from "./components/reactbits/Magnet";
@@ -35,8 +42,14 @@ import Particles from "./components/reactbits/Particles";
 import PixelSnow from "./components/reactbits/PixelSnow";
 import TrueFocus from "./components/reactbits/TrueFocus";
 import RotatingText from "./components/reactbits/RotatingText";
+import Iridescence from "./components/reactbits/Iridescence";
 
 type ThemeMode = "light" | "dark";
+
+const containerReveal = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.1 } },
+};
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const EMAIL = "kerntau@outlook.com";
@@ -129,30 +142,48 @@ function useActiveSection() {
   return activeSection;
 }
 
-function Uptime() {
-  const [uptime, setUptime] = useState<{ days: number; hours: number }>(() => {
-    const start = new Date("2025-11-10T00:00:00").getTime();
-    const difference = Date.now() - start;
-    const days = Math.floor(difference / 86400000);
-    const hours = Math.floor((difference % 86400000) / 3600000);
-    return { days, hours };
+function PreciseUptime() {
+  const [time, setTime] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
   });
 
   useEffect(() => {
-    const start = new Date("2025-11-10T00:00:00").getTime();
+    const start = new Date("2025-11-10T00:07:03").getTime();
+    let animId: number;
+
     const update = () => {
-      const difference = Date.now() - start;
-      const days = Math.floor(difference / 86400000);
-      const hours = Math.floor((difference % 86400000) / 3600000);
-      setUptime({ days, hours });
+      const diff = Math.max(0, Date.now() - start);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      const milliseconds = Math.floor(diff % 1000);
+
+      setTime({ days, hours, minutes, seconds, milliseconds });
+      animId = requestAnimationFrame(update);
     };
-    const timer = window.setInterval(update, 60000);
-    return () => window.clearInterval(timer);
+
+    animId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(animId);
   }, []);
 
   return (
-    <span className="font-mono inline-flex items-center gap-1">
-      <CountUp to={uptime.days} duration={1.8} /> DAYS / <CountUp to={uptime.hours} duration={1.5} /> HRS
+    <span className="font-mono tabular-nums inline-flex items-center gap-1 text-xs">
+      <span className="text-white font-bold">{time.days}d</span>
+      <span className="text-white/30 font-normal">:</span>
+      <span className="text-white font-bold">{String(time.hours).padStart(2, "0")}h</span>
+      <span className="text-white/30 font-normal">:</span>
+      <span className="text-white font-bold">{String(time.minutes).padStart(2, "0")}m</span>
+      <span className="text-white/30 font-normal">:</span>
+      <span className="text-white font-bold">{String(time.seconds).padStart(2, "0")}s</span>
+      <span className="text-white/30 font-normal">:</span>
+      <span className="text-[var(--t-signal)] font-bold min-w-[3.2ch] inline-block text-right drop-shadow-[0_0_6px_var(--t-signal)]">
+        {String(time.milliseconds).padStart(3, "0")}ms
+      </span>
     </span>
   );
 }
@@ -235,7 +266,7 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <ClickSpark sparkColor={theme === "dark" ? "#38bdf8" : "#0284c7"} sparkCount={8} duration={350}>
+      <ClickSpark sparkColor={theme === "dark" ? "#38bdf8" : "#0284c7"} sparkCount={10} duration={400}>
         <main className="site-root" aria-label="kerntau 个人主页">
         <audio
           ref={audioRef}
@@ -246,10 +277,11 @@ export default function App() {
           onPause={() => setIsPlayingBGM(false)}
         />
 
-        <PixelSnow className="fixed inset-0 z-0 opacity-80" pixelSize={3} snowflakeCount={80} speed={1.0} color={theme === "dark" ? "#ffffff" : "#38bdf8"} />
+        <Iridescence className="fixed inset-0 z-0 opacity-100 pointer-events-none" color={theme === "dark" ? [0.14, 0.55, 0.88] : [0.01, 0.45, 0.75]} speed={0.8} />
+        <PixelSnow className="fixed inset-0 z-0 opacity-70 pointer-events-none" pixelSize={2.5} snowflakeCount={75} speed={0.85} color={theme === "dark" ? "#ffffff" : "#38bdf8"} />
         {/* Global Lighter Blur Mask */}
         <div className="fixed inset-0 z-0 bg-black/10 backdrop-blur-md pointer-events-none" />
-        <Particles className="fixed inset-0 z-0 pointer-events-none" quantity={25} color={theme === "dark" ? "#ffffff" : "#38bdf8"} />
+        <Particles className="fixed inset-0 z-0 pointer-events-none" quantity={35} size={0.55} color={theme === "dark" ? "#ffffff" : "#38bdf8"} />
         
         <a className="skip-link" href="#content">跳到主要内容</a>
 
@@ -259,49 +291,55 @@ export default function App() {
         >
 
           <motion.div
-            className="flex flex-col items-center justify-center w-full max-w-6xl mx-auto my-auto"
+            className="hero-content flex flex-col items-center justify-center text-center py-2 md:py-4 z-10 w-full max-w-5xl"
+            variants={containerReveal}
             initial="hidden"
             animate="show"
             transition={{ staggerChildren: 0.12, delayChildren: reduceMotion ? 0 : 0.2 }}
+            style={{ willChange: "transform, opacity" }}
           >
-            <motion.div variants={heroReveal} className="w-full flex flex-col items-center justify-center z-10 gap-2">
-              <SignatureBackdrop />
-              <div className="flex items-center gap-1.5 text-xs font-mono font-semibold text-white/70 mt-1">
-                <span>IDENTITY //</span>
+            <motion.div variants={heroReveal} className="w-full flex flex-col items-center justify-center z-10 gap-0 relative px-4" style={{ willChange: "transform, opacity" }}>
+
+
+              {/* Pure Vibrant Brand Icons Horizontal Stream - Placed Above Signature */}
+              <motion.div variants={heroReveal} className="w-full z-20 -mb-8 md:-mb-6">
+                <PureVibrantIconStream />
+              </motion.div>
+
+              <div className="-my-6 md:-my-2 w-full">
+                <SignatureBackdrop />
+              </div>
+              
+              <div className="flex items-center gap-2 text-xs md:text-sm font-mono font-semibold text-white/70">
+                <span className="tracking-widest uppercase">IDENTITY //</span>
                 <RotatingText
                   texts={["SECURITY RESEARCHER", "FULLSTACK DEVELOPER", "CREATIVE ENGINEER"]}
-                  mainClassName="px-2 py-0.5 bg-white/5 text-[var(--t-signal)] font-bold rounded border border-white/10"
+                  mainClassName="px-3 py-1 bg-white/[0.04] text-[var(--t-signal)] font-bold rounded-lg border border-[var(--t-signal)]/30 shadow-[0_0_15px_rgba(56,189,248,0.2)]"
                   staggerFrom="last"
                   staggerDuration={0.02}
                   rotationInterval={2800}
                 />
               </div>
-              <TrueFocus
-                sentence="SECURITY FULLSTACK CREATIVE"
-                borderColor="#38bdf8"
-                glowColor="rgba(56, 189, 248, 0.5)"
-                className="text-xs md:text-sm font-mono tracking-[0.3em] font-bold text-white/90 uppercase mt-1"
-              />
             </motion.div>
 
             {/* Standalone Separate Floating Contact Buttons */}
             <motion.div 
               variants={heroReveal} 
-              className="flex flex-wrap items-center justify-center gap-4 mt-8 md:mt-10 z-20 max-w-2xl px-4"
+              className="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 mt-3 md:mt-8 z-20 max-w-2xl px-4"
             >
               {[
-                { id: 'github', label: 'GITHUB', icon: <SiGithub className="w-5 h-5 text-white" />, href: 'https://github.com/kerntau', hoverStyle: "hover:border-white/40 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]" },
-                { id: 'wechat', label: 'WECHAT', icon: <SiWechat className="w-5 h-5 text-[#07C160]" />, qr: { title: "微信 (WeChat)", src: "/wechat.png", color: "#07C160", desc: "扫一扫添加微信好友", icon: <SiWechat className="w-5 h-5 text-white" /> }, hoverStyle: "hover:border-[#07C160]/60 hover:bg-[#07C160]/10 hover:shadow-[0_0_20px_rgba(7,193,96,0.3)]" },
-                { id: 'qq', label: 'QQ', icon: <SiQq className="w-5 h-5 text-[#1296DB]" />, qr: { title: "腾讯 QQ", src: "/feishu.png", color: "#1296DB", desc: "扫一扫添加 QQ 好友", icon: <SiQq className="w-5 h-5 text-white" /> }, hoverStyle: "hover:border-[#1296DB]/60 hover:bg-[#1296DB]/10 hover:shadow-[0_0_20px_rgba(18,150,219,0.3)]" },
-                { id: 'feishu', label: 'FEISHU', icon: <FeishuIcon className="w-5 h-5 text-[#3370FF]" />, qr: { title: "飞书 (Feishu)", src: "/qq.jpg", color: "#3370FF", desc: "扫一扫添加飞书联系人", icon: <FeishuIcon className="w-5 h-5 text-white" /> }, hoverStyle: "hover:border-[#3370FF]/60 hover:bg-[#3370FF]/10 hover:shadow-[0_0_20px_rgba(51,112,255,0.3)]" },
-                { id: 'bilibili', label: 'BILIBILI', icon: <SiBilibili className="w-5 h-5 text-[#FF6699]" />, href: 'https://space.bilibili.com/9655855', hoverStyle: "hover:border-[#FF6699]/60 hover:bg-[#FF6699]/10 hover:shadow-[0_0_20px_rgba(255,102,153,0.3)]" },
-                { id: 'twitter', label: 'TWITTER', icon: <SiX className="w-5 h-5 text-white" />, href: 'https://x.com/Kerntau', hoverStyle: "hover:border-white/40 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]" },
-                { id: 'telegram', label: 'TELEGRAM', icon: <SiTelegram className="w-5 h-5 text-[#229ED9]" />, href: 'https://t.me/Kerntau', hoverStyle: "hover:border-[#229ED9]/60 hover:bg-[#229ED9]/10 hover:shadow-[0_0_20px_rgba(34,158,217,0.3)]" },
-                { id: 'facebook', label: 'FACEBOOK', icon: <SiFacebook className="w-5 h-5 text-[#1877F2]" />, href: 'https://www.facebook.com/profile.php?id=61584118511046', hoverStyle: "hover:border-[#1877F2]/60 hover:bg-[#1877F2]/10 hover:shadow-[0_0_20px_rgba(24,119,242,0.3)]" },
-                { id: 'gmail', label: toast === "kerntau@gmail.com" ? "COPIED" : "GMAIL", icon: toast === "kerntau@gmail.com" ? <Check className="w-5 h-5 text-[#EA4335]" /> : <SiGmail className="w-5 h-5 text-[#EA4335]" />, action: 'copy', email: 'kerntau@gmail.com', hoverStyle: "hover:border-[#EA4335]/60 hover:bg-[#EA4335]/10 hover:shadow-[0_0_20px_rgba(234,67,53,0.3)]" },
-                { id: 'outlook', label: toast === "kerntau@outlook.com" ? "COPIED" : "OUTLOOK", icon: toast === "kerntau@outlook.com" ? <Check className="w-5 h-5 text-[#0078D4]" /> : <OutlookIcon className="w-5 h-5 text-[#0078D4]" />, action: 'copy', email: 'kerntau@outlook.com', hoverStyle: "hover:border-[#0078D4]/60 hover:bg-[#0078D4]/10 hover:shadow-[0_0_20px_rgba(0,120,212,0.3)]" },
+                { id: 'github', label: 'GITHUB', icon: <SiGithub className="w-5 h-5 text-white" />, href: 'https://github.com/kerntau', hoverStyle: "hover:border-white/50 hover:bg-white/10 hover:shadow-[0_0_22px_rgba(255,255,255,0.35)]" },
+                { id: 'wechat', label: 'WECHAT', icon: <SiWechat className="w-5 h-5 text-[#07C160]" />, qr: { title: "微信 (WeChat)", src: "/wechat.png", color: "#07C160", desc: "扫一扫添加微信好友", icon: <SiWechat className="w-5 h-5 text-white" /> }, hoverStyle: "hover:border-[#07C160]/80 hover:bg-[#07C160]/15 hover:shadow-[0_0_22px_rgba(7,193,96,0.4)]" },
+                { id: 'qq', label: 'QQ', icon: <SiQq className="w-5 h-5 text-[#1296DB]" />, qr: { title: "腾讯 QQ", src: "/feishu.png", color: "#1296DB", desc: "扫一扫添加 QQ 好友", icon: <SiQq className="w-5 h-5 text-white" /> }, hoverStyle: "hover:border-[#1296DB]/80 hover:bg-[#1296DB]/15 hover:shadow-[0_0_22px_rgba(18,150,219,0.4)]" },
+                { id: 'feishu', label: 'FEISHU', icon: <FeishuIcon className="w-5 h-5 text-[#3370FF]" />, qr: { title: "飞书 (Feishu)", src: "/qq.jpg", color: "#3370FF", desc: "扫一扫添加飞书联系人", icon: <FeishuIcon className="w-5 h-5 text-white" /> }, hoverStyle: "hover:border-[#3370FF]/80 hover:bg-[#3370FF]/15 hover:shadow-[0_0_22px_rgba(51,112,255,0.4)]" },
+                { id: 'bilibili', label: 'BILIBILI', icon: <SiBilibili className="w-5 h-5 text-[#FF6699]" />, href: 'https://space.bilibili.com/9655855', hoverStyle: "hover:border-[#FF6699]/80 hover:bg-[#FF6699]/15 hover:shadow-[0_0_22px_rgba(255,102,153,0.4)]" },
+                { id: 'twitter', label: 'TWITTER', icon: <SiX className="w-5 h-5 text-white" />, href: 'https://x.com/Kerntau', hoverStyle: "hover:border-white/50 hover:bg-white/10 hover:shadow-[0_0_22px_rgba(255,255,255,0.35)]" },
+                { id: 'telegram', label: 'TELEGRAM', icon: <SiTelegram className="w-5 h-5 text-[#229ED9]" />, href: 'https://t.me/Kerntau', hoverStyle: "hover:border-[#229ED9]/80 hover:bg-[#229ED9]/15 hover:shadow-[0_0_22px_rgba(34,158,217,0.4)]" },
+                { id: 'facebook', label: 'FACEBOOK', icon: <SiFacebook className="w-5 h-5 text-[#1877F2]" />, href: 'https://www.facebook.com/profile.php?id=61584118511046', hoverStyle: "hover:border-[#1877F2]/80 hover:bg-[#1877F2]/15 hover:shadow-[0_0_22px_rgba(24,119,242,0.4)]" },
+                { id: 'gmail', label: toast === "kerntau@gmail.com" ? "COPIED" : "GMAIL", icon: toast === "kerntau@gmail.com" ? <Check className="w-5 h-5 text-[#EA4335]" /> : <SiGmail className="w-5 h-5 text-[#EA4335]" />, action: 'copy', email: 'kerntau@gmail.com', hoverStyle: "hover:border-[#EA4335]/80 hover:bg-[#EA4335]/15 hover:shadow-[0_0_22px_rgba(234,67,53,0.4)]" },
+                { id: 'outlook', label: toast === "kerntau@outlook.com" ? "COPIED" : "OUTLOOK", icon: toast === "kerntau@outlook.com" ? <Check className="w-5 h-5 text-[#0078D4]" /> : <OutlookIcon className="w-5 h-5 text-[#0078D4]" />, action: 'copy', email: 'kerntau@outlook.com', hoverStyle: "hover:border-[#0078D4]/80 hover:bg-[#0078D4]/15 hover:shadow-[0_0_22px_rgba(0,120,212,0.4)]" },
               ].map(link => {
-                const commonClasses = `group relative p-3 rounded-full bg-slate-950/40 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_8px_20px_-4px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center cursor-pointer ${link.hoverStyle}`;
+                const commonClasses = `group relative p-2.5 md:p-3 rounded-full bg-slate-950/40 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_8px_20px_-4px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center cursor-pointer ${link.hoverStyle}`;
                 const tooltip = (
                   <span className="absolute -top-11 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-slate-900 text-white text-[10px] font-mono font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap shadow-xl border border-white/10 tracking-wider">
                     {link.label}
@@ -338,16 +376,6 @@ export default function App() {
                   </Magnet>
                 ) : null;
               })}
-            </motion.div>
-
-            {/* Scroll Down Arrow */}
-            <motion.div
-              variants={heroReveal}
-              className="flex flex-col items-center animate-bounce text-white/50 hover:text-[var(--t-signal)] transition-colors cursor-pointer mt-8 md:mt-10 z-30"
-              onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              <span className="text-[10px] font-mono tracking-widest uppercase mb-1">Scroll</span>
-              <ChevronDown className="w-5 h-5" />
             </motion.div>
 
             {/* Minimalist Premium QR Modal */}
@@ -404,16 +432,60 @@ export default function App() {
             </AnimatePresence>
 
           </motion.div>
+
+          {/* Scroll Down Arrow - Positioned at true bottom of section */}
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce text-white/70 hover:text-[var(--t-signal)] transition-all cursor-pointer z-30 drop-shadow-[0_0_8px_var(--t-signal)]"
+            onClick={() => {
+              const el = document.getElementById('about') || document.getElementById('content');
+              el?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <span className="text-[10px] font-mono tracking-widest uppercase mb-1 font-bold">Scroll</span>
+            <ChevronDown className="w-5 h-5 text-[var(--t-signal)]" />
+          </motion.div>
         </section>
 
         <div className="relative z-10 w-full border-t border-white/10">
           <SiteSections />
 
-          <footer className="site-footer">
-            <span className="footer-end">END / KEEP BUILDING</span>
-            <div className="footer-meta">
-              <span>© {YEAR} KERNTAU</span>
-              <span>运行 <Uptime /></span>
+          <footer className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-12 py-5 md:py-6 mt-6 md:mt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono text-white/60">
+            {/* Left: Copyright & Brand Tag */}
+            <div className="flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-[var(--t-signal)] shadow-[0_0_8px_var(--t-signal)] shrink-0" />
+              <span className="font-bold text-white">© {YEAR} KERNTAU</span>
+              <span className="text-white/20">/</span>
+              <span className="text-white/40 hidden sm:inline">KEEP BUILDING</span>
+            </div>
+
+            {/* Center: Live Status Indicator */}
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 text-[11px] font-bold shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>ALL SYSTEMS OPERATIONAL</span>
+            </div>
+
+            {/* Right: Precise Millisecond Uptime & Back to Top */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.02] shadow-inner text-white/70 backdrop-blur-md">
+                <span className="text-white/40 text-[11px]">RUNNING //</span>
+                <PreciseUptime />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="group flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.02] hover:bg-white/[0.08] hover:border-[var(--t-signal)]/60 hover:shadow-[0_0_15px_rgba(56,189,248,0.25)] text-white text-xs font-mono font-bold transition-all duration-300 shadow-sm cursor-pointer shrink-0"
+                aria-label="返回顶部"
+              >
+                <span>TOP</span>
+                <ArrowUp className="w-3.5 h-3.5 text-[var(--t-signal)] group-hover:-translate-y-0.5 group-hover:drop-shadow-[0_0_6px_var(--t-signal)] transition-all" />
+              </button>
             </div>
           </footer>
         </div>

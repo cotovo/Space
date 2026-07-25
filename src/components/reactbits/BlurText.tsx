@@ -43,15 +43,15 @@ export default function BlurText({
 
   const defaultFrom =
     direction === "top"
-      ? { filter: "blur(10px)", opacity: 0, transform: "translate3d(0,-20px,0)" }
-      : { filter: "blur(10px)", opacity: 0, transform: "translate3d(0,20px,0)" };
+      ? { filter: "blur(12px)", opacity: 0, transform: "translate3d(0,-16px,0)" }
+      : { filter: "blur(12px)", opacity: 0, transform: "translate3d(0,16px,0)" };
 
   const defaultTo = [
     {
-      filter: "blur(5px)",
-      opacity: 0.5,
+      filter: "blur(4px)",
+      opacity: 0.6,
       transform:
-        direction === "top" ? "translate3d(0,5px,0)" : "translate3d(0,-5px,0)",
+        direction === "top" ? "translate3d(0,3px,0)" : "translate3d(0,-3px,0)",
     },
     { filter: "blur(0px)", opacity: 1, transform: "translate3d(0,0,0)" },
   ];
@@ -64,9 +64,9 @@ export default function BlurText({
           initial={defaultFrom}
           animate={inView ? defaultTo : defaultFrom}
           transition={{
-            duration: 0.4,
+            duration: 0.5,
             delay: (index * delay) / 1000,
-            ease: "easeOut",
+            ease: [0.16, 1, 0.3, 1],
           }}
           onAnimationComplete={
             index === elements.length - 1 ? onAnimationComplete : undefined

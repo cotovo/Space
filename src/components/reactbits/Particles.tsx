@@ -27,10 +27,10 @@ function hexToRgb(hex: string): number[] {
 
 export default function Particles({
   className = "",
-  quantity = 30,
-  staticity = 50,
-  ease = 50,
-  size = 0.4,
+  quantity = 35,
+  staticity = 40,
+  ease = 40,
+  size = 0.5,
   refresh = false,
   color = "#ffffff",
   vx = 0,
